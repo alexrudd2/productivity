@@ -129,7 +129,7 @@ class ProductivityPLC(AsyncioModbusClient):
             data_type = self.tags[key]['type'].rstrip(digits)
             if type(value) == int and data_type == 'float':  # noqa: E721
                 value = float(value)
-            if type(value) != pydoc.locate(data_type):
+            if type(value) != pydoc.locate(data_type):  # noqa: E721
                 raise ValueError(f"Expected {key} to be a {data_type}.")
             if 0 <= start_address < 65536:
                 discrete_to_write[key] = value
