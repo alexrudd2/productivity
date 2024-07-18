@@ -10,7 +10,7 @@ setup(
     description="Python driver for AutomationDirect Productivity Series PLCs.",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/numat/productivity/',
+    url='https://github.com/alexrudd2/productivity/',
     author='Patrick Fuller',
     author_email='pat@numat-tech.com',
     maintainer="Alex Ruddick",
