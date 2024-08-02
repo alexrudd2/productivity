@@ -12,7 +12,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/alexrudd2/productivity/',
     author='Patrick Fuller',
-    author_email='pat@numat-tech.com',
+    author_email='patrickfuller@gmail.com',
     maintainer="Alex Ruddick",
     maintainer_email="alex@numat-tech.com",
     packages=['productivity'],
