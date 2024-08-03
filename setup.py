@@ -6,7 +6,7 @@ with open('README.md') as in_file:
 
 setup(
     name='productivity',
-    version='0.11.1',
+    version='0.11.2',
     description="Python driver for AutomationDirect Productivity Series PLCs.",
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -14,7 +14,7 @@ setup(
     author='Patrick Fuller',
     author_email='patrickfuller@gmail.com',
     maintainer="Alex Ruddick",
-    maintainer_email="alex@numat-tech.com",
+    maintainer_email="alex@ruddick.tech",
     packages=['productivity'],
     entry_points={
         'console_scripts': [('productivity = productivity:command_line')]
