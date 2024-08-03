@@ -12,11 +12,17 @@ from math import ceil
 from string import digits
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from pymodbus.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse
-from pymodbus.constants import Endian
+try:
+    from pymodbus.pdu.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse
+except ImportError:  # pymodbus < 3.7.0
+    from pymodbus.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse  # type: ignore
+from pymodbus.constants import Endian  # noqa: I001
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 from pymodbus.pdu import ExceptionResponse
-from pymodbus.register_write_message import WriteMultipleRegistersResponse
+try:
+    from pymodbus.pdu.register_write_message import WriteMultipleRegistersResponse
+except ImportError:  # pymodbus < 3.7.0
+    from pymodbus.register_write_message import WriteMultipleRegistersResponse  # type: ignore
 
 from productivity.util import DATA_TYPES, TYPE_START, AsyncioModbusClient
 
