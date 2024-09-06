@@ -10,7 +10,7 @@ import pydoc
 from copy import deepcopy
 from math import ceil
 from string import digits
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 try:
     from pymodbus.pdu.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse
@@ -81,7 +81,7 @@ class ProductivityPLC(AsyncioModbusClient):
         return self.tags
 
     async def set(self, data_dict: Optional[dict] = None, *args, **kwargs
-                  ) -> List[str]:
+                  ) -> list[str]:
         """Set tag names to values.
 
         This function expects a dictionary of values or keyword arguments.
@@ -98,7 +98,7 @@ class ProductivityPLC(AsyncioModbusClient):
         discrete_to_write, registers_to_write = await self._parse_set_args(data_dict,
                                                                            args, kwargs)
 
-        responses: List[str] = []
+        responses: list[str] = []
         if discrete_to_write:
             discrete_resp = await self._write_discrete_values(discrete_to_write)
             if any(r.isError() for r in discrete_resp):
@@ -114,7 +114,7 @@ class ProductivityPLC(AsyncioModbusClient):
         return responses
 
     async def _parse_set_args(self, data_dict: Optional[dict],
-                              args: tuple, kwargs: dict) -> Tuple[dict, dict]:
+                              args: tuple, kwargs: dict) -> tuple[dict, dict]:
         """Parse and validate input to the set function."""
         if isinstance(data_dict, dict):
             kwargs.update(data_dict)
@@ -180,7 +180,7 @@ class ProductivityPLC(AsyncioModbusClient):
         return resp[0]
 
     async def _write_discrete_values(self, discrete_to_write: dict
-                                     ) -> List[Union[WriteSingleCoilResponse,
+                                     ) -> list[Union[WriteSingleCoilResponse,
                                                      WriteMultipleCoilsResponse]]:
         """Write a dict of discrete values to the PLC.
 
@@ -287,7 +287,7 @@ class ProductivityPLC(AsyncioModbusClient):
         with open(tag_filepath) as csv_file:
             csv_data = csv_file.read().splitlines()
         csv_data[0] = csv_data[0].lstrip('## ')
-        parsed: Dict[str, Dict[str, Any]] = {
+        parsed: dict[str, dict[str, Any]] = {
             row['Tag Name']: {
                 'address': {
                     'start': int(row['MODBUS Start Address']),
@@ -328,7 +328,7 @@ class ProductivityPLC(AsyncioModbusClient):
         """
         addresses = sorted([tag['address']['start'] for tag in tags.values()]
                            + [tag['address']['end'] for tag in tags.values()])
-        output: Dict[str, dict] = {}
+        output: dict[str, dict] = {}
         do_count = 0
         for a in addresses:
             if 0 < a < 65536:
