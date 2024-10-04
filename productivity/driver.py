@@ -2,15 +2,16 @@
 Python driver for AutomationDirect Productivity Series PLCs.
 
 Distributed under the GNU General Public License v2
-Copyright (C) 2022 NuMat Technologies
 """
+from __future__ import annotations
+
 import csv
 import logging
 import pydoc
 from copy import deepcopy
 from math import ceil
 from string import digits
-from typing import Any, Optional, Union
+from typing import Any
 
 try:
     from pymodbus.pdu.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse
@@ -80,7 +81,7 @@ class ProductivityPLC(AsyncioModbusClient):
         """
         return self.tags
 
-    async def set(self, data_dict: Optional[dict] = None, *args, **kwargs
+    async def set(self, data_dict: dict | None = None, *args, **kwargs
                   ) -> list[str]:
         """Set tag names to values.
 
@@ -113,7 +114,7 @@ class ProductivityPLC(AsyncioModbusClient):
                 responses.append(str(register_resp))
         return responses
 
-    async def _parse_set_args(self, data_dict: Optional[dict],
+    async def _parse_set_args(self, data_dict: dict | None,
                               args: tuple, kwargs: dict) -> tuple[dict, dict]:
         """Parse and validate input to the set function."""
         if isinstance(data_dict, dict):
@@ -146,7 +147,7 @@ class ProductivityPLC(AsyncioModbusClient):
         return discrete_to_write, registers_to_write
 
     async def _write_register_value(self, key: str,
-                                    value: Union[str, float, int]
+                                    value: str | float | int
                                     ) -> WriteMultipleRegistersResponse:
         """Write a single value to the holding registers.
 
@@ -180,8 +181,7 @@ class ProductivityPLC(AsyncioModbusClient):
         return resp[0]
 
     async def _write_discrete_values(self, discrete_to_write: dict
-                                     ) -> list[Union[WriteSingleCoilResponse,
-                                                     WriteMultipleCoilsResponse]]:
+                                     ) -> list[WriteSingleCoilResponse | WriteMultipleCoilsResponse]:
         """Write a dict of discrete values to the PLC.
 
         To reduce the number of requests, the complete current state is
