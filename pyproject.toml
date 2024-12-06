@@ -61,13 +61,14 @@ target-version = "py310"
 
 [tool.ruff.lint]
 ignore = [
+  "B005",     # FIXME: lstrip()
   "D104",     # Missing docstring in public package
   "D107",     # Missing docstring in __init__
   "SIM108",   # ternary operator
 ]
 
 select = [
-  # "B",   # bandit
+  "B",   # flake8-bugbear
   "C",   # complexity
   "D",   # docstrings
   "E",   # pycodestyle errors
