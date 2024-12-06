@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "productivity"
 version = "0.13.0"
-description="Python driver for AutomationDirect Productivity Series PLCs."
+description = "Python driver for AutomationDirect Productivity Series PLCs."
 dependencies = [
   "pymodbus>=2.4.0; python_version == '3.8'",
   "pymodbus>=2.4.0; python_version == '3.9'",
@@ -20,18 +20,18 @@ maintainers = [
 ]
 readme = "README.md"
 classifiers = [
-    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
-    "Development Status :: 4 - Beta",
-    "Natural Language :: English",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
-    "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)"
+  "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+  "Development Status :: 4 - Beta",
+  "Natural Language :: English",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+  "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)"
 ]
 
 [project.optional-dependencies]
@@ -63,25 +63,23 @@ target-version = "py310"
 ignore = [
   "D104",     # Missing docstring in public package
   "D107",     # Missing docstring in __init__
-  "PT001",    # Use `@pytest.fixture()` over `@pytest.fixture`
-  "PT023",    # Use `@pytest.mark.asyncio()` over `@pytest.mark.asyncio
   "SIM108",   # ternary operator
 ]
 
 select = [
-    # "B",   # bandit
-    "C",   # complexity
-    "D",   # docstrings
-    "E",   # pycodestyle errors
-    "F",   # pyflakes
-    "I",   # isort
-    "PT",  # flake8-pytest
-    "RUF", # ruff base config
-    "SIM", # flake-simplify
-    "UP",  # pyupgrade
-    "W",   # pycodestyle warnings
-    "YTT", # flake8-2020
-    # "ARG", # flake8-unused args
+  # "B",   # bandit
+  "C",   # complexity
+  "D",   # docstrings
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "I",   # isort
+  "PT",  # flake8-pytest
+  "RUF", # ruff base config
+  "SIM", # flake-simplify
+  "UP",  # pyupgrade
+  "W",   # pycodestyle warnings
+  "YTT", # flake8-2020
+  # "ARG", # flake8-unused args
 ]
 
 [tool.ruff.lint.pydocstyle]
