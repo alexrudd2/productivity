@@ -247,8 +247,8 @@ class ProductivityPLC(AsyncioModbusClient):
                     current += 2
                 elif data_type == 'str':
                     chars = self.tags[tag]['length']
+                    codec = 'unicode-escape'
                     try:
-                        codec = 'unicode-escape'
                         test_decoder = deepcopy(decoder)
                         test_decoder.decode_string(chars).decode(codec)
                         result[tag] = decoder.decode_string(chars).decode(codec).strip('\u0000')

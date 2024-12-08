@@ -1,7 +1,6 @@
 """Base functionality for modbus communication.
 
 Distributed under the GNU General Public License v2
-Copyright (C) 2022 NuMat Technologies
 """
 import asyncio
 
@@ -52,9 +51,9 @@ class AsyncioModbusClient:
         self._register_types = ['holding', 'input']
         self._detect_pymodbus_version()
         if self.pymodbus30plus:
-            self.client = AsyncModbusTcpClient(address, timeout=timeout)
+            self.client = AsyncModbusTcpClient(address, timeout=timeout)  # type: ignore
         else:  # 2.x
-            self.client = ReconnectingAsyncioModbusTcpClient()
+            self.client = ReconnectingAsyncioModbusTcpClient()  # type: ignore
         self.lock = asyncio.Lock()
         self.connectTask = asyncio.create_task(self._connect())
 
