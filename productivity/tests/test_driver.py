@@ -64,7 +64,6 @@ def test_get_tags(plc_driver):
     assert plc_driver.get_tags() == expected
 
 
-@pytest.mark.asyncio
 async def test_get(plc_driver):
     """Confirm that the driver returns correct values on get() calls."""
     expected = {'AV-101': False, 'AV-102': False, 'toggle_AV-101': False,
@@ -74,7 +73,6 @@ async def test_get(plc_driver):
     assert await plc_driver.get() == expected
 
 
-@pytest.mark.asyncio
 async def test_roundtrip(plc_driver):
     """Confirm various datatypes are read back correctly after being set."""
     await plc_driver.set({'AV-101': True, 'toggle_AV-101': True, 'Raw Pressure': 1,
@@ -87,7 +85,6 @@ async def test_roundtrip(plc_driver):
     assert await plc_driver.get() == expected
 
 
-@pytest.mark.asyncio
 async def test_set_errors(plc_driver):
     """Confirm the driver gives an error on invalid set() calls."""
     with pytest.raises(TypeError, match='Invalid input'):
@@ -100,7 +97,6 @@ async def test_set_errors(plc_driver):
         await plc_driver.set(av101=True)
 
 
-@pytest.mark.asyncio
 async def test_type_checking(plc_driver):
     """Confirm the driver responds to set() requests with correct datatypes."""
     with pytest.raises(ValueError, match='Expected AV-101 to be a bool'):
