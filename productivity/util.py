@@ -1,7 +1,6 @@
 """Base functionality for modbus communication.
 
 Distributed under the GNU General Public License v2
-Copyright (C) 2022 NuMat Technologies
 """
 import asyncio
 
