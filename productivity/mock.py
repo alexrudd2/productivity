@@ -66,13 +66,13 @@ class ProductivityPLC(realProductivityPLC):
         if method == 'read_coils':
             address, count = args
             if pymodbus38plus:
-                return ReadCoilsResponse(bits = [self._coils[address + i] for i in range(count)])  # type: ignore[arg-type]
+                return ReadCoilsResponse(bits=[self._coils[address + i] for i in range(count)])  # type: ignore[arg-type]
             return ReadCoilsResponse([self._coils[address + i] for i in range(count)])  # type: ignore[arg-type]
         if method == 'read_discrete_inputs':
             address, count = args
             bits = [self._discrete_inputs[address + i] for i in range(count)]
             if pymodbus38plus:
-                return ReadDiscreteInputsResponse(bits = bits)  # type: ignore[arg-type]
+                return ReadDiscreteInputsResponse(bits=bits)  # type: ignore[arg-type]
             return ReadDiscreteInputsResponse(bits)  # type: ignore[arg-type]
         elif method == 'read_holding_registers':
             address, count = args
