@@ -14,16 +14,22 @@ from string import digits
 from typing import Any
 
 try:
-    from pymodbus.pdu.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse
-except ImportError:  # pymodbus < 3.7.0
-    from pymodbus.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse  # type: ignore
+    from pymodbus.pdu.bit_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse
+except ImportError:  # pymodbus 3.7.x
+    try:
+        from pymodbus.pdu.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse  # type: ignore
+    except ImportError:  # pymodbus < 3.7.0
+        from pymodbus.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse  # type: ignore
 from pymodbus.constants import Endian  # noqa: I001
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 from pymodbus.pdu import ExceptionResponse
 try:
-    from pymodbus.pdu.register_write_message import WriteMultipleRegistersResponse
-except ImportError:  # pymodbus < 3.7.0
-    from pymodbus.register_write_message import WriteMultipleRegistersResponse  # type: ignore
+    from pymodbus.pdu.register_message import WriteMultipleRegistersResponse
+except ImportError:  # pymodbus 3.7.x
+    try:
+        from pymodbus.pdu.register_write_message import WriteMultipleRegistersResponse  # type: ignore
+    except ImportError:  # pymodbus < 3.7.0
+        from pymodbus.register_write_message import WriteMultipleRegistersResponse  # type: ignore
 
 from productivity.util import DATA_TYPES, TYPE_START, AsyncioModbusClient
 
