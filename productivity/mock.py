@@ -9,15 +9,30 @@ from collections import defaultdict
 from unittest.mock import MagicMock
 
 try:
-    from pymodbus.pdu.bit_read_message import ReadCoilsResponse, ReadDiscreteInputsResponse
-    from pymodbus.pdu.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse
-    from pymodbus.pdu.register_read_message import ReadHoldingRegistersResponse
-    from pymodbus.pdu.register_write_message import WriteMultipleRegistersResponse, WriteSingleRegisterResponse
-except ImportError:  # pymodbus < 3.7.0
-    from pymodbus.bit_read_message import ReadCoilsResponse, ReadDiscreteInputsResponse  # type: ignore  # noqa: I001
-    from pymodbus.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse  # type: ignore
-    from pymodbus.register_read_message import ReadHoldingRegistersResponse  # type: ignore
-    from pymodbus.register_write_message import WriteMultipleRegistersResponse, WriteSingleRegisterResponse  # type: ignore
+    from pymodbus.pdu.bit_message import (
+        ReadCoilsResponse,
+        ReadDiscreteInputsResponse,
+        WriteMultipleCoilsResponse,
+        WriteSingleCoilResponse,
+    )
+    from pymodbus.pdu.register_message import (
+        ReadHoldingRegistersResponse,
+        WriteMultipleRegistersResponse,
+        WriteSingleRegisterResponse,
+    )
+    pymodbus38plus = True
+except ImportError:  # pymodbus 3.7.x
+    pymodbus38plus = False
+    try:
+        from pymodbus.pdu.bit_read_message import ReadCoilsResponse, ReadDiscreteInputsResponse  # type: ignore  # noqa: I001
+        from pymodbus.pdu.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse  # type: ignore
+        from pymodbus.pdu.register_read_message import ReadHoldingRegistersResponse  # type: ignore
+        from pymodbus.pdu.register_write_message import WriteMultipleRegistersResponse, WriteSingleRegisterResponse  # type: ignore
+    except ImportError:  # pymodbus < 3.7.0
+        from pymodbus.bit_read_message import ReadCoilsResponse, ReadDiscreteInputsResponse  # type: ignore  # noqa: I001
+        from pymodbus.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse  # type: ignore
+        from pymodbus.register_read_message import ReadHoldingRegistersResponse  # type: ignore
+        from pymodbus.register_write_message import WriteMultipleRegistersResponse, WriteSingleRegisterResponse  # type: ignore
 
 from productivity.driver import ProductivityPLC as realProductivityPLC
 
@@ -47,19 +62,26 @@ class ProductivityPLC(realProductivityPLC):
         if self.pymodbus33plus:
             self.client.close = lambda: None
 
-    async def _request(self, method, *args, **kwargs):
+    async def _request(self, method, *args, **kwargs):  # noqa: C901
         if method == 'read_coils':
             address, count = args
-            return ReadCoilsResponse([self._coils[address + i] for i in range(count)])
+            if pymodbus38plus:
+                return ReadCoilsResponse(bits=[self._coils[address + i] for i in range(count)])  # type: ignore[arg-type]
+            return ReadCoilsResponse([self._coils[address + i] for i in range(count)])  # type: ignore[arg-type]
         if method == 'read_discrete_inputs':
             address, count = args
-            return ReadDiscreteInputsResponse([self._discrete_inputs[address + i]
-                                               for i in range(count)])
+            bits = [self._discrete_inputs[address + i] for i in range(count)]
+            if pymodbus38plus:
+                return ReadDiscreteInputsResponse(bits=bits)  # type: ignore[arg-type]
+            return ReadDiscreteInputsResponse(bits)  # type: ignore[arg-type]
         elif method == 'read_holding_registers':
             address, count = args
-            return ReadHoldingRegistersResponse([int.from_bytes(self._registers[address + i],
-                                                                byteorder='big')
-                                                 for i in range(count)])
+            registers = [int.from_bytes(self._registers[address + i], byteorder='big')
+                         for i in range(count)]
+            if pymodbus38plus:
+                return ReadHoldingRegistersResponse(registers=registers)  # type: ignore[arg-type]
+            return ReadHoldingRegistersResponse(registers)  # type: ignore[arg-type]
+
         elif method == 'write_coil':
             address, data = args
             self._coils[address] = data
