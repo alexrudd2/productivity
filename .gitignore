@@ -9,3 +9,4 @@ dist
 venv
 .coverage
 test-output.xml
+uv.lock
