@@ -5,11 +5,9 @@ name: productivity
 
 on:
   push:
-    branches:
-      - "master"
-      - "renovate/**"
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   test:
