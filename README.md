@@ -11,7 +11,7 @@ Installation
 ============
 
 ```
-pip install productivity
+uv install productivity
 ```
 
 Usage
