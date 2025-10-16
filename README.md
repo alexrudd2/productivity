@@ -1,7 +1,7 @@
 Productivity
 ============
 
-Python ≥3.8 driver and command-line tool for [AutomationDirect Productivity Series PLCs](https://www.automationdirect.com/adc/overview/catalog/programmable_controllers/productivity_series_controllers).
+Python driver and command-line tool for [AutomationDirect Productivity Series PLCs](https://www.automationdirect.com/adc/overview/catalog/programmable_controllers/productivity_series_controllers).
 
 <p align="center">
   <img src="https://www.automationdirect.com/images/overviews/p-series-cpus_400.jpg" />
@@ -11,7 +11,7 @@ Installation
 ============
 
 ```
-uv install productivity
+uv pip install productivity
 ```
 
 Usage
