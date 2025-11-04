@@ -4,11 +4,8 @@ Distributed under the GNU General Public License v2
 """
 import asyncio
 
-try:
-    from pymodbus.client import AsyncModbusTcpClient  # 3.x
-except ImportError:  # 2.4.x - 2.5.x
-    from pymodbus.client.asynchronous.async_io import ReconnectingAsyncioModbusTcpClient  # type: ignore
 import pymodbus.exceptions
+from pymodbus.client import AsyncModbusTcpClient
 
 TYPE_START = {
     'discrete_output': 0,
@@ -50,10 +47,7 @@ class AsyncioModbusClient:
         self.timeout = timeout
         self._register_types = ['holding', 'input']
         self._detect_pymodbus_version()
-        if self.pymodbus30plus:
-            self.client = AsyncModbusTcpClient(address, timeout=timeout)  # type: ignore
-        else:  # 2.x
-            self.client = ReconnectingAsyncioModbusTcpClient()  # type: ignore
+        self.client = AsyncModbusTcpClient(address, timeout=timeout)  # type: ignore
         self.lock = asyncio.Lock()
         self.connectTask = asyncio.create_task(self._connect())
 
@@ -75,10 +69,7 @@ class AsyncioModbusClient:
     async def _connect(self):
         """Start asynchronous reconnect loop."""
         try:
-            if self.pymodbus30plus:
-                await asyncio.wait_for(self.client.connect(), timeout=self.timeout)  # 3.x
-            else:  # 2.4.x - 2.5.x
-                await self.client.start(self.ip)  # type: ignore
+            await asyncio.wait_for(self.client.connect(), timeout=self.timeout)
         except Exception as e:
             raise OSError(f"Could not connect to '{self.ip}'.") from e
 
@@ -169,7 +160,5 @@ class AsyncioModbusClient:
         """Close the TCP connection."""
         if self.pymodbus33plus:
             self.client.close()  # 3.3.x
-        elif self.pymodbus30plus:
+        else:
             await self.client.close()  # type: ignore  # 3.0.x - 3.2.x
-        else:  # 2.4.x - 2.5.x
-            self.client.stop()  # type: ignore
