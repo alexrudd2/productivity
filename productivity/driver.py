@@ -3,8 +3,6 @@ Python driver for AutomationDirect Productivity Series PLCs.
 
 Distributed under the GNU General Public License v2
 """
-from __future__ import annotations
-
 import csv
 import logging
 import pydoc
