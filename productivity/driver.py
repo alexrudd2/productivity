@@ -309,7 +309,7 @@ class ProductivityPLC(AsyncioModbusClient):
             if not data['type']:
                 raise TypeError(
                     f"{data['id']} is an unsupported data type. Open a "
-                    "github issue at numat/productivity to get it added."
+                    "github issue at alexrudd2/productivity to get it added."
                 )
         sorted_tags = {k: parsed[k] for k in
                        sorted(parsed, key=lambda k: parsed[k]['address']['start'])}
