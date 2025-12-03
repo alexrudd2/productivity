@@ -34,12 +34,12 @@ classifiers = [
 
 [dependency-groups]
 dev = [
-  'mypy>=1.18.2',
   'pytest>=9.0',
   'pytest-cov',
   'pytest-asyncio',
   'ruff==0.14.7',
-  'types-PyYAML'
+  'types-PyYAML',
+  "zuban>=0.3.0",
 ]
 
 [project.scripts]

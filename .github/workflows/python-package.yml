@@ -5,9 +5,9 @@ name: productivity
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   test:
@@ -16,7 +16,17 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.10", "3.14"]
-        pymodbus-version: ["3.0.2", "3.1.3", "3.2.2", "3.3.1", "3.4.1", "3.5.4", "3.6.9", "3.7.2"]
+        pymodbus-version:
+          [
+            "3.0.2",
+            "3.1.3",
+            "3.2.2",
+            "3.3.1",
+            "3.4.1",
+            "3.5.4",
+            "3.6.9",
+            "3.7.2",
+          ]
     steps:
       - uses: actions/checkout@v6
       - name: Install uv
@@ -29,8 +39,8 @@ jobs:
           uv sync --all-extras
       - name: Lint with ruff
         run: uv run ruff check .
-      - name: Check types with mypy
-        run: uv run mypy productivity
+      - name: Check types with zuban
+        run: uv run zuban check
       - name: Pytest
         run: uv run pytest
 
