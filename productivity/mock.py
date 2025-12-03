@@ -39,9 +39,9 @@ class ProductivityPLC(realProductivityPLC):
         self.addresses = self._calculate_addresses(self.tags)
         self.map = {data['address']['start']: tag for tag, data in self.tags.items()}
         self.client = AsyncClientMock()
-        self._coils = defaultdict(bool)
-        self._discrete_inputs = defaultdict(bool)
-        self._registers = defaultdict(bytes)
+        self._coils: defaultdict[int, bool] = defaultdict(bool)
+        self._discrete_inputs: defaultdict[int, bool] = defaultdict(bool)
+        self._registers: defaultdict[int, bytes] = defaultdict(bytes)
         self._register_types = ['holding', 'input']
         self._detect_pymodbus_version()
         if self.pymodbus33plus:
