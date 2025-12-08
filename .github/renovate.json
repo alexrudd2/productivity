@@ -14,7 +14,6 @@
     {
       "automerge": true,
       "matchPackageNames": [
-        "/mypy/",
         "/pre-commit/",
         "/pytest/",
         "/ruff/",
