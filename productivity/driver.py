@@ -33,7 +33,7 @@ class ProductivityPLC(AsyncioModbusClient):
     abstracting corner cases and providing a simple asynchronous interface.
     """
 
-    def __init__(self, address, tag_filepath, timeout=1):
+    def __init__(self, address: str, tag_filepath, timeout: float= 1) -> None:
         """Initialize PLC connection and data structure.
 
         Args:
@@ -235,6 +235,7 @@ class ProductivityPLC(AsyncioModbusClient):
                                                      wordorder=lilendian)
         current = self.addresses[a_type]['address'] + TYPE_START[a_type] + 1
         end = current + self.addresses[a_type]['count']
+
         result = {}
         while current < end:
             if current in self.map:

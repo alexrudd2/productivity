@@ -33,7 +33,7 @@ class AsyncClientMock(MagicMock):
 class ProductivityPLC(realProductivityPLC):
     """Mock Productivity driver using local storage instead of remote communication."""
 
-    def __init__(self, address, tag_filepath, timeout=1, *args, **kwargs):
+    def __init__(self, address: str, tag_filepath, timeout: float = 1, *args, **kwargs):
         self.discontinuous_discrete_output = False
         self.tags = self._load_tags(tag_filepath)
         self.addresses = self._calculate_addresses(self.tags)

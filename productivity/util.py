@@ -41,13 +41,13 @@ class AsyncioModbusClient:
     including standard timeouts, async context manager, and queued requests.
     """
 
-    def __init__(self, address, timeout=1):
+    def __init__(self, address: str, timeout: float = 1):
         """Set up communication parameters."""
         self.ip = address
         self.timeout = timeout
         self._register_types = ['holding', 'input']
         self._detect_pymodbus_version()
-        self.client = AsyncModbusTcpClient(address, timeout=timeout)  # type: ignore
+        self.client = AsyncModbusTcpClient(address, timeout=timeout)
         self.lock = asyncio.Lock()
         self.connectTask = asyncio.create_task(self._connect())
 
