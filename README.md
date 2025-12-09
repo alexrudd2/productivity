@@ -45,8 +45,8 @@ See `productivity --help` for more.
 
 ### Python
 
-This driver uses Python ≥3.5's async/await syntax to asynchronously communicate with
-a Productivity2000 PLC. For example (note that asyncio.run() requires Python >=3.7):
+This driver uses Python async/await syntax to asynchronously communicate with
+a Productivity2000 PLC. For example:
 
 ```python
 import asyncio
