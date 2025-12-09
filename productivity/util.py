@@ -115,11 +115,11 @@ class AsyncioModbusClient:
         """Write modbus coils."""
         return await self._request('write_coils', address, values)
 
-    async def write_register(self, address, value, skip_encode=False):
+    async def write_register(self, address, value):
         """Write a modbus register."""
-        return await self._request('write_register', address, value, skip_encode=skip_encode)
+        return await self._request('write_register', address, value)
 
-    async def write_registers(self, address, values, skip_encode=False):
+    async def write_registers(self, address, values):
         """Write modbus registers.
 
         The Modbus protocol doesn't allow requests longer than 250 bytes
@@ -128,11 +128,9 @@ class AsyncioModbusClient:
         """
         responses = []
         while len(values) > 62:
-            responses.append(await self._request(
-                'write_registers', address, values, skip_encode=skip_encode))
+            responses.append(await self._request('write_registers', address, values))
             address, values = address + 124, values[62:]
-        responses.append(await self._request(
-            'write_registers', address, values, skip_encode=skip_encode))
+        responses.append(await self._request('write_registers', address, values))
         return responses
 
     async def _request(self, method, *args, **kwargs):

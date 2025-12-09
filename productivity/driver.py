@@ -6,7 +6,7 @@ Distributed under the GNU General Public License v2
 import csv
 import logging
 import pydoc
-from copy import deepcopy
+import struct
 from math import ceil
 from string import digits
 from typing import Any
@@ -15,9 +15,8 @@ try:
     from pymodbus.pdu.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse
 except ImportError:  # pymodbus < 3.7.0
     from pymodbus.bit_write_message import WriteMultipleCoilsResponse, WriteSingleCoilResponse  # type: ignore
-from pymodbus.constants import Endian  # noqa: I001
-from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 from pymodbus.pdu import ExceptionResponse
+
 try:
     from pymodbus.pdu.register_write_message import WriteMultipleRegistersResponse
 except ImportError:  # pymodbus < 3.7.0
@@ -154,28 +153,29 @@ class ProductivityPLC(AsyncioModbusClient):
 
         """
         start_address = self.tags[key]['address']['start'] - 400001
-        bigendian = Endian.BIG if self.pymodbus35plus else Endian.Big  # type:ignore[attr-defined]
-        lilendian = Endian.LITTLE if self.pymodbus35plus else Endian.Little  # type:ignore
-        builder = BinaryPayloadBuilder(byteorder=bigendian,
-                                       wordorder=lilendian)
         data_type = self.tags[key]['type']
         if data_type == 'float':
-            builder.add_32bit_float(float(value))
+            packed_4_bytes = struct.pack('<f', value)      # Little-endian single-precision float
+            values = struct.unpack('<HH', packed_4_bytes)  # unpack 2x uint_16
         elif data_type == 'str' and isinstance(value, str):
             chars = self.tags[key]['length']
             if len(value) > chars:
                 raise ValueError(f'{value} is too long for {key}. '
                                  f'Max: {chars} chars')
-            builder.add_string(value.ljust(chars))
+            raw = value.ljust(chars).encode('unicode-escape')
+            if len(raw) % 2:
+                raw += b'\x00'  # pad for full 16-bit registers
+            values = struct.unpack(f'>{len(raw)//2}H', raw)
         elif data_type == 'int16':
-            builder.add_16bit_int(int(value))
+            packed_2_bytes = struct.pack('<h', value)     # pack int_16
+            values = struct.unpack('<H', packed_2_bytes)  # unpack uint_16
         elif data_type == 'int32':
-            builder.add_32bit_int(int(value))
+            packed_4_bytes = struct.pack('<i', value)      # pack int_32
+            values = struct.unpack('<HH', packed_4_bytes)  # unpack 2x uint_16
         else:
             raise ValueError("Missing data type.")
         resp = await self.write_registers(start_address,
-                                          builder.build(),
-                                          skip_encode=True)
+                                          values=values)
         return resp[0]
 
     async def _write_discrete_values(self, discrete_to_write: dict
@@ -228,48 +228,51 @@ class ProductivityPLC(AsyncioModbusClient):
     async def _read_registers(self, a_type: str) -> dict:
         """Handle reading input or holding registers from the PLC."""
         r = await self.read_registers(**self.addresses[a_type], type=a_type)
-        bigendian = Endian.BIG if self.pymodbus35plus else Endian.Big  # type:ignore[attr-defined]
-        lilendian = Endian.LITTLE if self.pymodbus35plus else Endian.Little  # type:ignore
-        decoder = BinaryPayloadDecoder.fromRegisters(r,
-                                                     byteorder=bigendian,
-                                                     wordorder=lilendian)
         current = self.addresses[a_type]['address'] + TYPE_START[a_type] + 1
         end = current + self.addresses[a_type]['count']
 
         result = {}
+        i = 0
         while current < end:
             if current in self.map:
                 tag = self.map[current]
                 data_type = self.tags[tag]['type']
                 if data_type == 'float':
-                    result[tag] = decoder.decode_32bit_float()
+                    reg_bytes = struct.pack('>HH', r[i+1], r[i])
+                    (result[tag],) = struct.unpack('>f', reg_bytes)
+                    i += 2
                     current += 2
                 elif data_type == 'str':
                     chars = self.tags[tag]['length']
                     codec = 'unicode-escape'
+                    num_regs = ceil(chars / 2)
+                    reg_bytes = struct.pack(f'>{num_regs}H', *r[i:i+num_regs])
+                    raw = reg_bytes[:chars]
                     try:
-                        test_decoder = deepcopy(decoder)
-                        test_decoder.decode_string(chars).decode(codec)
-                        result[tag] = decoder.decode_string(chars).decode(codec).strip('\u0000')
+                        result[tag] = raw.decode(codec).strip('\u0000')
                     except UnicodeDecodeError as e:
-                        result[tag] = decoder.decode_string(chars).decode(codec, 'ignore') \
+                        result[tag] = raw.decode(codec, 'ignore') \
                             .strip('\u0000')
                         logging.error(f"Decoding register {current} had an error,"
                                       f" which was ignored: {e}")
                     # Handle odd length strings
-                    current += ceil(chars / 2)
-                    decoder._pointer += chars % 2
+                    i += num_regs
+                    current += num_regs
                 elif data_type == 'int16':
-                    result[tag] = decoder.decode_16bit_int()
+                    reg_bytes = struct.pack('>H', r[i])
+                    (result[tag],) = struct.unpack('>h', reg_bytes)
+                    i += 1
                     current += 1
                 elif data_type == 'int32':
-                    result[tag] = decoder.decode_32bit_int()
+                    reg_bytes = struct.pack('>HH', r[i+1], r[i])
+                    (result[tag],) = struct.unpack('>i', reg_bytes)
+                    i += 2
                     current += 2
                 else:
                     raise ValueError("Missing data type.")
             else:
                 # Empty modbus addresses could land you on a register that's not used
-                decoder._pointer += 2
+                i += 1
                 current += 1
         return result
 

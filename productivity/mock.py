@@ -71,11 +71,11 @@ class ProductivityPLC(realProductivityPLC):
             return WriteMultipleCoilsResponse(address, len(data))
         elif method == 'write_register':
             address, data = args
-            self._registers[address] = data
+            self._registers[address] = data.to_bytes(2)
             return WriteSingleRegisterResponse(address, data)
         elif method == 'write_registers':
             address, data = args
             for i, d in enumerate(data):
-                self._registers[address + i] = d
+                self._registers[address + i] = d.to_bytes(2)
             return WriteMultipleRegistersResponse(address, len(data))
         return NotImplementedError(f'Unrecognised method: {method}')
