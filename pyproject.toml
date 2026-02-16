@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "productivity"
-version = "0.14.0"
+version = "0.14.1"
 description = "Python driver for AutomationDirect Productivity Series PLCs."
 dependencies = [
   "pymodbus>=3.0.2,<3.13,!=3.10.0",
