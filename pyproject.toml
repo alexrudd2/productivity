@@ -38,7 +38,7 @@ dev = [
   'pytest>=9.0',
   'pytest-cov',
   'pytest-asyncio',
-  'ruff==0.15.0',
+  'ruff==0.15.4',
   'types-PyYAML',
   "zuban>=0.3.0",
 ]
